@@ -21,6 +21,8 @@ class Expense:
 
 # Upload file
 ## Read the file, read all the content
+
+
 ## Helper functions
 
 # Helper functions
@@ -63,8 +65,6 @@ for each_line in test_input:
 ## Sum the total expense for each category
 
 ## Sum the total expense for each month
-
-## Sum the total expense for each year 
 
 ## Function to trigger threshold alert 
 
