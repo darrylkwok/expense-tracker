@@ -1,0 +1,10 @@
+MONTH_YEAR, Oct 2021
+BUDGET, 500
+Day, 15, Food, 10, Entertainment, 0, Transport, 0, School, 0, Travel, 0, Description, Macs
+Day, 15, Food, 10, Entertainment, 0, Transport, 0, School, 0, Travel, 0, Description, Koufu
+Day, 16, Food, 0, Entertainment, 10, Transport, 0, School, 0, Travel, 0, Description, Movie
+MONTH_YEAR, Nov 2021
+BUDGET, 500
+Day, 15, Food, 10, Entertainment, 0, Transport, 0, School, 0, Travel, 0, Description, Macs
+Day, 15, Food, 10, Entertainment, 0, Transport, 0, School, 0, Travel, 0, Description, Koufu
+Day, 16, Food, 0, Entertainment, 10, Transport, 0, School, 0, Travel, 0, Description, Movie
