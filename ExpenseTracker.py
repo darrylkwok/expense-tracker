@@ -3,8 +3,9 @@ import sys
 import math
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import sys, os
+from datetime import datetime
+
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog
 from PyQt5 import uic
@@ -19,7 +20,7 @@ Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 class Main(QMainWindow, Ui_MainWindow):
     monthly_info = {}
     month_list = []
-
+    
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -32,6 +33,15 @@ class Main(QMainWindow, Ui_MainWindow):
         self.expenseTable.setColumnWidth(0, 120)
         self.expenseTable.setColumnWidth(1, 148)
         self.expenseTable.setColumnWidth(2, 80)
+
+    def createFile(self):
+        # Retrieve system date (MONTH_YEAR, BUDGET = 0)
+        currentMonth = datetime.now().month
+        currentYear = datetime.now().year
+        # Create blank text file for new user:
+        with open("user_data.txt", "w") as file:
+            file.write(f'MONTH_YEAR, {currentMonth} {currentYear}')
+            file.write('BUDGET, 0')
 
     def uploadFile(self):
         print('clicked upload file')
@@ -51,7 +61,7 @@ class Main(QMainWindow, Ui_MainWindow):
             # Call read file to get the data out
             self.readFile(expense_lines)
             
-        
+     
     def readFile(self, expense_lines):
         # monthly_info stores all the monthly budget and expenses
         monthly_info = {}
