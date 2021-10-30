@@ -36,7 +36,7 @@ class Main(QMainWindow, Ui_MainWindow):
 
     def createFile(self):
         # Retrieve system date (MONTH_YEAR, BUDGET = 0)
-        currentMonth = datetime.now().month
+        currentMonth = datetime.now().strftime('%h')
         currentYear = datetime.now().year
         # Create blank text file for new user:
         with open("user_data.txt", "w") as file:
