@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import sys, os
+from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog
 from PyQt5 import uic
 
@@ -16,12 +17,21 @@ Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 
 #Incomplete
 class Main(QMainWindow, Ui_MainWindow):
+    monthly_info = {}
+    month_list = []
+
     def __init__(self):
         super().__init__()
         self.setupUi(self)
         
         self.uploadFile_button.clicked.connect(self.uploadFile)
-
+        self.selectMonth_list.currentTextChanged.connect(self.displayExpense)
+        
+        # Set up for expense table display
+        self.expenseTable.setColumnCount(3)
+        self.expenseTable.setColumnWidth(0, 120)
+        self.expenseTable.setColumnWidth(1, 148)
+        self.expenseTable.setColumnWidth(2, 80)
 
     def uploadFile(self):
         print('clicked upload file')
@@ -37,11 +47,10 @@ class Main(QMainWindow, Ui_MainWindow):
             self.fileSelected_display.setText("test_input.txt")
             expense_lines=f.readlines()
             f.close()
-            print("AM BEFORE RETURN EXPENSE_LINES")
-            print(expense_lines)
-            self.readFile(expense_lines)
+
             # Call read file to get the data out
-            # To implement
+            self.readFile(expense_lines)
+            
         
     def readFile(self, expense_lines):
         # monthly_info stores all the monthly budget and expenses
@@ -72,22 +81,71 @@ class Main(QMainWindow, Ui_MainWindow):
                 # loop till the fourth last element
                 for i in range(2, len(line_list) - 3, 2):
                     if line_list[i] in expense[line_list[1]]:
-                        if line_list[i+1] != "0":
+                        if (line_list[i+1] != "0"):
                             expense[line_list[1]][line_list[i]].append((line_list[i+1], line_list[-1]))
                     
                     else:
-                        if line_list[i+1] != "0":
+                        if (line_list[i+1] != "0"):
                             expense[line_list[1]][line_list[i]] = [(line_list[i+1], line_list[-1])]
 
         # Finish reading all the lines in the txt file
         if tracker != None and expense != {}:
             monthly_info[tracker].append(expense)
         
-        print("monthly_info")
-        print(monthly_info)
-        return monthly_info
+         # print("monthly_info")
+        # print(monthly_info)
+        self.monthly_info = monthly_info
+        
+        # Loads all the months in the combobox
+        self.loadMonth()
+        
 
+    def loadMonth(self):
+        for key in self.monthly_info:
+            self.month_list.append(key)
 
+        # Start displaying the dropdown from the latest month
+        for month in reversed(self.month_list):
+            self.selectMonth_list.addItem(month)
+
+    def displayExpense(self):
+        month_selected = self.selectMonth_list.currentText()
+        self.current_month_data = self.monthly_info[month_selected]
+        # print(self.current_month_data)
+
+        # Display Budget for current month
+        self.budgetDisplay.setText(self.current_month_data[0])
+        
+        # Get Current Month's expenses (Dict)
+        expenses = self.current_month_data[1]
+        print(expenses)
+        row = 0
+        self.expenseTable.setRowCount(9)
+        
+        for day in expenses:
+            self.expenseTable.setItem(row, 0, QtWidgets.QTableWidgetItem(day + " " + month_selected))
+            row += 1
+            # Get expenses for each day (Dict)
+            day_expenses = expenses[day]
+            for category in day_expenses:
+                # Get expenses for each category (List)
+                cat_expenses = day_expenses[category]
+
+                # Get individual item spent (Tuple)
+                for spend in cat_expenses:
+                    # Create QTableWidgetItems
+                    cat = QtWidgets.QTableWidgetItem(category)
+                    cat.setTextAlignment(QtCore.Qt.AlignCenter)
+                    self.expenseTable.setItem(row, 0, cat)
+                    
+                    desc = QtWidgets.QTableWidgetItem(spend[1])
+                    desc.setTextAlignment(QtCore.Qt.AlignCenter)
+                    self.expenseTable.setItem(row, 1, desc)
+                    
+                    amount = QtWidgets.QTableWidgetItem(spend[0])
+                    amount.setTextAlignment(QtCore.Qt.AlignCenter)
+                    self.expenseTable.setItem(row, 2, amount)
+                    row += 1
 
 
 if __name__ == '__main__':

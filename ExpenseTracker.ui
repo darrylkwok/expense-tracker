@@ -113,31 +113,6 @@ color: rgb(0, 0, 0);</string>
     <property name="styleSheet">
      <string notr="true">background-color:rgb(255, 255, 255);</string>
     </property>
-    <item>
-     <property name="text">
-      <string>Oct 2021</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Sep 2021</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Aug 2021</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Jul 2021</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Jun 2021</string>
-     </property>
-    </item>
    </widget>
    <widget class="QLabel" name="selectMonth_label">
     <property name="geometry">
@@ -715,33 +690,6 @@ border-color: rgb(170, 170, 255);</string>
      <string>Overview</string>
     </property>
    </widget>
-   <widget class="QScrollArea" name="allExpenses_scrollArea">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>230</y>
-      <width>371</width>
-      <height>551</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(255,255,255);
-border-color: rgb(255, 255, 255);</string>
-    </property>
-    <property name="widgetResizable">
-     <bool>true</bool>
-    </property>
-    <widget class="QWidget" name="scrollAreaWidgetContents">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>369</width>
-       <height>549</height>
-      </rect>
-     </property>
-    </widget>
-   </widget>
    <widget class="QLabel" name="reminderDisplay_label">
     <property name="geometry">
      <rect>
@@ -783,6 +731,46 @@ border-color: rgb(255, 255, 255);</string>
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QTableWidget" name="expenseTable">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>240</y>
+      <width>351</width>
+      <height>541</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(255, 255, 255);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Plain</enum>
+    </property>
+    <property name="lineWidth">
+     <number>0</number>
+    </property>
+    <property name="showGrid">
+     <bool>false</bool>
+    </property>
+    <property name="gridStyle">
+     <enum>Qt::NoPen</enum>
+    </property>
+    <attribute name="horizontalHeaderVisible">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderHighlightSections">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="verticalHeaderVisible">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="verticalHeaderHighlightSections">
+     <bool>false</bool>
+    </attribute>
+   </widget>
    <zorder>review_label</zorder>
    <zorder>title_label</zorder>
    <zorder>fileSelected_display</zorder>
@@ -799,9 +787,9 @@ border-color: rgb(255, 255, 255);</string>
    <zorder>label_2</zorder>
    <zorder>frame_2</zorder>
    <zorder>label_6</zorder>
-   <zorder>allExpenses_scrollArea</zorder>
    <zorder>reminderDisplay_label</zorder>
    <zorder>reminderDisplay</zorder>
+   <zorder>expenseTable</zorder>
   </widget>
  </widget>
  <resources/>
