@@ -20,6 +20,7 @@ Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 class Main(QMainWindow, Ui_MainWindow):
     monthly_info = {}
     month_list = []
+    filename = ""
     
     def __init__(self):
         super().__init__()
@@ -40,8 +41,8 @@ class Main(QMainWindow, Ui_MainWindow):
         currentYear = datetime.now().year
         # Create blank text file for new user:
         with open("user_data.txt", "w") as file:
-            file.write(f'MONTH_YEAR, {currentMonth} {currentYear}')
-            file.write('BUDGET, 0')
+            file.write(f'MONTH_YEAR,{currentMonth} {currentYear}')
+            file.write('BUDGET,0')
 
     def uploadFile(self):
         print('clicked upload file')
@@ -53,16 +54,22 @@ class Main(QMainWindow, Ui_MainWindow):
         
         # If any file selected, just import test_input.txt :')
         if fname[0]:
-            f=open("test_input.txt","r")
-            self.fileSelected_display.setText("test_input.txt")
-            expense_lines=f.readlines()
-            f.close()
-
+            filepath = fname[0]
+            self.filename = filepath[filepath.rfind('/') + 1:]
+            print(self.filename)
+            
+            
             # Call read file to get the data out
-            self.readFile(expense_lines)
+            # self.readFile(self.filename)
             
      
-    def readFile(self, expense_lines):
+    def readFile(self, filename):
+
+        f=open(filename,"r")
+        self.fileSelected_display.setText(filename)
+        expense_lines=f.readlines()
+        f.close()
+
         # monthly_info stores all the monthly budget and expenses
         monthly_info = {}
         # expense only stores the expenses and is appended to the monthly_info after reading all the lines or reading a new month in the txt file
