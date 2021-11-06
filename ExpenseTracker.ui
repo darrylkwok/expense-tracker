@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>757</width>
-    <height>799</height>
+    <height>828</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -159,7 +159,7 @@ color: rgb(0, 0, 0);</string>
      <rect>
       <x>560</x>
       <y>160</y>
-      <width>61</width>
+      <width>91</width>
       <height>21</height>
      </rect>
     </property>
@@ -457,7 +457,7 @@ border-color: rgb(170, 170, 255);</string>
     <property name="geometry">
      <rect>
       <x>470</x>
-      <y>540</y>
+      <y>550</y>
       <width>141</width>
       <height>16</height>
      </rect>
@@ -470,7 +470,7 @@ border-color: rgb(170, 170, 255);</string>
     <property name="geometry">
      <rect>
       <x>450</x>
-      <y>560</y>
+      <y>570</y>
       <width>231</width>
       <height>221</height>
      </rect>
@@ -500,12 +500,12 @@ border-color: rgb(170, 170, 255);</string>
      </item>
      <item>
       <property name="text">
-       <string>Travel</string>
+       <string>Transport</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Transport</string>
+       <string>Groceries</string>
       </property>
      </item>
      <item>
@@ -516,6 +516,11 @@ border-color: rgb(170, 170, 255);</string>
      <item>
       <property name="text">
        <string>Entertainment</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Other</string>
       </property>
      </item>
     </widget>
@@ -682,7 +687,7 @@ border-color: rgb(170, 170, 255);</string>
       <x>40</x>
       <y>250</y>
       <width>351</width>
-      <height>531</height>
+      <height>541</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -735,6 +740,44 @@ border-color: rgb(170, 170, 255);</string>
      <string>Please add a new month!</string>
     </property>
    </widget>
+   <widget class="QLabel" name="newMonthError_alert">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>520</y>
+      <width>231</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>New Month Error Message</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="QLabel" name="newExpenseError_alert">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>790</y>
+      <width>231</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>New Expense Error Message</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
    <zorder>review_label</zorder>
    <zorder>title_label</zorder>
    <zorder>fileSelected_display</zorder>
@@ -753,6 +796,8 @@ border-color: rgb(170, 170, 255);</string>
    <zorder>label_6</zorder>
    <zorder>expenseTable</zorder>
    <zorder>addMonth_alert</zorder>
+   <zorder>newMonthError_alert</zorder>
+   <zorder>newExpenseError_alert</zorder>
   </widget>
  </widget>
  <resources/>

@@ -26,19 +26,24 @@ class Main(QMainWindow, Ui_MainWindow):
     monthly_info = {}
     month_list = []
     current_month_budget = 0
-    curren_month_expenses = {}
+    current_month_expenses = {}
     filename = ""
     
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        # Hide alert on start up
+        # Hide alerts on start up
         self.addMonth_alert.setVisible(False)
+        self.newMonthError_alert.setVisible(False)
+        self.newExpenseError_alert.setVisible(False)
         
         self.uploadFile_button.clicked.connect(self.uploadFile)
         self.newFile_button.clicked.connect(self.createFile)
         
         self.selectMonth_list.currentTextChanged.connect(self.displayExpense)
+        
+        self.expenseAdd_button.clicked.connect(self.addNewExpense)
+        self.monthAdd_button.clicked.connect(self.addNewMonth)
         
         # Set up for expense table display
         self.expenseTable.setColumnCount(3)
@@ -58,8 +63,10 @@ class Main(QMainWindow, Ui_MainWindow):
         
         # Show alert on new file to remind user to create new month!
         self.addMonth_alert.setVisible(True)
+        
         # Disable Add expense button as no month available in new file
         self.expenseAdd_button.setEnabled(False)
+        
         # Reset Total Budget, Total Expense & Budget Left Display
         self.totalExpenses_text.setText("0.0")
         self.budgetLeft_text.setText("0.0")
@@ -131,8 +138,8 @@ class Main(QMainWindow, Ui_MainWindow):
         if tracker != None and expense != {}:
             monthly_info[tracker].append(expense)
         
-        print("monthly_info")
-        print(monthly_info)
+#         print("monthly_info")
+#         print(monthly_info)
         self.monthly_info = monthly_info
         
         # Loads all the months in the combobox
@@ -167,7 +174,7 @@ class Main(QMainWindow, Ui_MainWindow):
             
         if (month_selected != ""):
             current_month_data = self.monthly_info[month_selected]
-            print("Month Selected: " + month_selected)
+#             print("Month Selected: " + month_selected)
 
             # Display Budget for current month -- if is int, convert to float to show decimals
             self.budgetDisplay.setText(str(float(current_month_data[0])))
@@ -175,13 +182,13 @@ class Main(QMainWindow, Ui_MainWindow):
             # Store Current Month's budget in global
             self.current_month_budget = float(current_month_data[0])
             
-            if (len(current_month_data) != 1):
+            if (current_month_data[1] != {}):
                 # Get Current Month's expenses (Dict)
                 expenses = current_month_data[1]
                 # Store Current Month's expenses in global
                 self.current_month_expenses = expenses
-                print("Current Month Expenses")
-                print(self.current_month_expenses)
+#                 print("Current Month Expenses")
+#                 print(self.current_month_expenses)
 
                 # Calculate & Display total spent this month
                 self.calculateMonthExpenses()
@@ -224,6 +231,7 @@ class Main(QMainWindow, Ui_MainWindow):
                             self.expenseTable.setItem(row, 2, amount)
                             row += 1
         
+    
     def calculateMonthExpenses(self):
         # Get all expenses into list regardless of dates
         month_expenses_list = [list(dict.values(i)) for i in list(dict.values(self.current_month_expenses))]
@@ -242,6 +250,7 @@ class Main(QMainWindow, Ui_MainWindow):
         budget_left = self.current_month_budget - monthly_total
         self.budgetLeft_text.setText(str(budget_left))
         
+        
     def calculateDailyExpenses(self, day_expenses):
         day_expenses_list = list(dict.values(day_expenses))
 
@@ -250,7 +259,6 @@ class Main(QMainWindow, Ui_MainWindow):
             for i in range(len(category)):
                 daily_total += float(category[i][0])
                     
-        print("daily_total: " + str(daily_total))
         return str(daily_total)
         
     
@@ -270,8 +278,85 @@ class Main(QMainWindow, Ui_MainWindow):
                 # One row for one spend in all categories
                 count += len(self.current_month_expenses[day][cat])
                 
-        print("Row Count: " + str(count))
         self.expenseTable.setRowCount(count)
+    
+    def addNewExpense(self):
+        # If Alert was visible, set invisible after each click first
+        if (self.newExpenseError_alert.isVisible()):
+            self.newExpenseError_alert.setVisible(False)
+            
+        # Get All Required Text
+        day = self.expenseDate_edit.text().strip()
+        category = self.expenseCategory_list.currentText()
+        amount = self.expenseAmount_edit.text().strip()
+        description = self.expenseDescription_edit.text().strip()
+        current_month = self.selectMonth_list.currentText()
+        
+        # Check if all fields have values, if not show error
+        if (day == "" or amount == "" or description == ""):
+            self.newExpenseError_alert.setText("No empty fields allowed")
+            self.newExpenseError_alert.setVisible(True)
+            
+        # Check if this is an existing date in the month
+        else:
+            if (day in self.current_month_expenses):
+                # Check if this is an existing category in the day
+                if (category in self.current_month_expenses[day]):
+                    # Append spend to existing category in the day
+                    self.current_month_expenses[day][category].append((amount,description))
+
+                else:
+                    # Create new category spend for the day
+                    self.current_month_expenses[day][category] = [(amount,description)]
+
+            else:
+                # Create new day in the month with expense data
+                self.current_month_expenses[day] = {category: [(amount,description)]}
+            
+            # Update new expense into global monthly_info and display in table
+            self.monthly_info[current_month][1] = self.current_month_expenses
+            self.displayExpense()
+            
+            # Reset all input fields
+            self.expenseDate_edit.setText("")
+            self.expenseCategory_list.setCurrentIndex(0)
+            self.expenseAmount_edit.setText("")
+            self.expenseDescription_edit.setText("")
+    
+    def addNewMonth(self):
+        # If Alert was visible, set invisible after each click first
+        if (self.newMonthError_alert.isVisible()):
+            self.newMonthError_alert.setVisible(False)
+            
+        # Get All Required Text
+        new_month = self.newMonth_edit.text().strip()
+        new_budget = self.newBudget_edit.text().strip()
+        
+        # Check if all fields have values, if not show error
+        if (new_month == "" or new_budget == ""):
+            self.newMonthError_alert.setText("No empty fields allowed")
+            self.newMonthError_alert.setVisible(True)
+            
+        # Update new month into monthly_info dict to be displayed
+        else:
+            self.monthly_info[new_month] = [new_budget, {}]
+
+            # Reset Data for New, Empty Month
+            self.current_month_expenses = {}
+            self.totalExpenses_text.setText("0.0")
+            self.budgetLeft_text.setText("0.0") 
+
+            # Display New Month 
+            self.loadMonth()
+            self.displayExpense()
+            
+            # If from new file, remove alert for user to add new month
+            if (self.addMonth_alert.isVisible()):
+                self.addMonth_alert.setVisible(False)
+        
+            # Reset all input fields
+            self.newMonth_edit.setText("")
+            self.newBudget_edit.setText("")
         
 if __name__ == '__main__':
     app = QApplication(sys.argv)
