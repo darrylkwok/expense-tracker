@@ -26,7 +26,7 @@ def addNewExpense(day, category, description, amount):
 
 
 def addNewMonth(month, year):
-    month_year = f'MONTH_YEAR, {month} {year}'
+    month_year = f'MONTH_YEAR,{month} {year}'
 
     return month_year
 
