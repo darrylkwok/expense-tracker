@@ -1,10 +1,6 @@
 # Main file
 import sys
-import math
-# import pandas as pd
-# import numpy as np
 import sys, os
-from datetime import datetime
 
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog
@@ -16,12 +12,6 @@ from Expense import *
 qtCreatorFile = "ExpenseTracker.ui"
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 
-# # Get full path of directory of current file
-# ui_path = os.path.dirname(os.path.abspath(__file__))
-# # Combine path with UI name, and pass to loadUiType
-# Ui_MainWindow, QtBaseClass = uic.loadUiType(os.path.join(ui_path, "ExpenseTracker.ui"))
-
-#Incomplete
 class Main(QMainWindow, Ui_MainWindow):
     monthly_info = {}
     current_month_budget = 0
@@ -74,6 +64,9 @@ class Main(QMainWindow, Ui_MainWindow):
         
         # Show alert on new file to remind user to create new month!
         self.addMonth_alert.setVisible(True)
+        # Hide all other possible alerts
+        self.newExpenseError_alert.setVisible(False)
+        self.newMonthError_alert.setVisible(False)
         
         # Disable Add expense button as no month available in new file
         self.expenseAdd_button.setEnabled(False)
@@ -95,6 +88,16 @@ class Main(QMainWindow, Ui_MainWindow):
             self.filename = filepath[filepath.rfind('/') + 1:]
             print(self.filename)
             
+            # Reset Total Budget, Total Expense & Budget Left Display
+            self.totalExpenses_text.setText("0.0")
+            self.budgetLeft_text.setText("0.0")
+            self.budgetDisplay.setText("0.0")
+
+            # Remove all alerts for new upload
+            self.addMonth_alert.setVisible(False)
+            self.newExpenseError_alert.setVisible(False)
+            self.newMonthError_alert.setVisible(False)
+
             # Call read file to get the data out
             self.readFile(self.filename)
             
@@ -166,10 +169,17 @@ class Main(QMainWindow, Ui_MainWindow):
         for key in self.monthly_info:
             months.append(key)
         
+        print("months")
+        print(months)
         # If there are months in dropdown, Enable Add New Expense button
-        if (months != []):
+        if (len(months) > 0):
+            print("yes months")
             self.expenseAdd_button.setEnabled(True)
-        
+        else:
+            print("no months")
+            self.expenseAdd_button.setEnabled(False)
+            self.addMonth_alert.setVisible(True)
+
         # Clear existing data in dropdown
         self.selectMonth_list.clear()
         
@@ -196,12 +206,15 @@ class Main(QMainWindow, Ui_MainWindow):
             
             # Display Budget for current month -- if is int, convert to float to show decimals
             self.budgetDisplay.setText(str(round(float(current_month_data[0]),2)))
+            self.budgetLeft_text.setText(str(round(float(current_month_data[0]),2)))
             
             # Store Current Month's budget in global
             self.current_month_budget = float(current_month_data[0])
             
             # If not new month (E.g. 'Dec 2021': ['300', {}]), Else Nothing to Display
-            if (current_month_data[1] != {}):
+            print("current_month_data")
+            print(current_month_data)
+            if (len(current_month_data) > 1):
                 # Get Current Month's expenses (Dict)
                 # {'11': {'Shopping': [('10', 'Books')], 'Groceries': [('2', 'Bus')]}}
                 expenses = current_month_data[1]
@@ -233,6 +246,7 @@ class Main(QMainWindow, Ui_MainWindow):
                     total.setTextAlignment(QtCore.Qt.AlignCenter)
                     self.expenseTable.setItem(row, 2, total)
                     
+                    # Colour Row for Date blue
                     self.expenseTable.item(row, 0).setBackground(QtGui.QColor(170, 255, 255))
                     self.expenseTable.item(row, 1).setBackground(QtGui.QColor(170, 255, 255))
                     self.expenseTable.item(row, 2).setBackground(QtGui.QColor(170, 255, 255))
@@ -359,7 +373,11 @@ class Main(QMainWindow, Ui_MainWindow):
                 self.current_month_expenses[day] = {category: [(amount,description)]}
             
             # Update new expense into global monthly_info and display in table
-            self.monthly_info[current_month][1] = self.current_month_expenses
+            if (len(self.monthly_info[current_month]) > 1):
+                self.monthly_info[current_month][1] = self.current_month_expenses
+            else:
+                self.monthly_info[current_month].append(self.current_month_expenses)
+                
             self.displayExpense()
             
             # Reset all input fields
@@ -387,7 +405,7 @@ class Main(QMainWindow, Ui_MainWindow):
             
         # Update new month into monthly_info dict to be displayed
         else:
-            self.monthly_info[new_month] = [new_budget, {}]
+            self.monthly_info[new_month] = [new_budget]
 
             # Reset Data for New, Empty Month
             self.current_month_expenses = {}
@@ -424,41 +442,43 @@ class Main(QMainWindow, Ui_MainWindow):
                 
                 print("monthly_info")
                 print(self.monthly_info)
-        
-                # {'15': {'Food': [('10', 'Macs'), ('6', Burger)], 'Entertainment': [('10', 'Movie')]}, 
-                #  '16': {'Transport': [('3', 'Bus')]}}
-                current_month_expense = self.monthly_info[month_year][1]
-                for day in current_month_expense:
-                    day_output = "Day," + day
-                    
-                    # {'Food': [('10', 'Macs'), ('6', Burger)], 'Entertainment': [('10', 'Movie')]}
-                    current_day_expense = current_month_expense[day]
-                    for category in current_day_expense:
-                        category_output = category
-                        
-                        # [('10', 'Macs'), ('6', Burger)]
-                        current_cat_expense = current_day_expense[category]
-                        for expense in current_cat_expense:
-                            amount_output = expense[0]
-                            desc_output = expense[1]
-                            
-                            # Prepare data to be written in line
-                            values = ["0", "0", "0", "0", "0", "0", "0"]
-                            # find the index of the category this expense belongs to
-                            cat_index = categories.index(category_output)
-                            # replace the amount in the category index position
-                            values[cat_index] = amount_output
-                            
-                            # replace the description value in the categories list
-                            values[-1] = desc_output
-                            
-                            # Initalise line_output with day info "Day,1"
-                            line_output = day_output 
-                            # Day,1,Food,0,Entertainment,0,Shopping,12,Groceries,0,Transport,0,Other,0,Description,Mac
-                            for i in range(len(categories)):
-                                line_output += "," + categories[i] + "," + values[i]
-                            
-                            file.write(line_output + "\n")
+                
+                # If not just ['500'] (i.e only have budget no expense)
+                if (len(self.monthly_info[month_year]) > 1):
+                    # {'15': {'Food': [('10', 'Macs'), ('6', Burger)], 'Entertainment': [('10', 'Movie')]}, 
+                    #  '16': {'Transport': [('3', 'Bus')]}}
+                    current_month_expense = self.monthly_info[month_year][1]
+                    for day in current_month_expense:
+                        day_output = "Day," + day
+
+                        # {'Food': [('10', 'Macs'), ('6', Burger)], 'Entertainment': [('10', 'Movie')]}
+                        current_day_expense = current_month_expense[day]
+                        for category in current_day_expense:
+                            category_output = category
+
+                            # [('10', 'Macs'), ('6', Burger)]
+                            current_cat_expense = current_day_expense[category]
+                            for expense in current_cat_expense:
+                                amount_output = expense[0]
+                                desc_output = expense[1]
+
+                                # Prepare data to be written in line
+                                values = ["0", "0", "0", "0", "0", "0", "0"]
+                                # find the index of the category this expense belongs to
+                                cat_index = categories.index(category_output)
+                                # replace the amount in the category index position
+                                values[cat_index] = amount_output
+
+                                # replace the description value in the categories list
+                                values[-1] = desc_output
+
+                                # Initalise line_output with day info "Day,1"
+                                line_output = day_output 
+                                # Day,1,Food,0,Entertainment,0,Shopping,12,Groceries,0,Transport,0,Other,0,Description,Mac
+                                for i in range(len(categories)):
+                                    line_output += "," + categories[i] + "," + values[i]
+
+                                file.write(line_output + "\n")
                             
             file.close()
     

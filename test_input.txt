@@ -1,10 +1,15 @@
 MONTH_YEAR,Oct 2021
 BUDGET,500
-Day,15,Food,10,Entertainment,0,Transport,0,School,0,Travel,0,Description,Macs
-Day,15,Food,0,Entertainment,10,Transport,0,School,0,Travel,0,Description,Movie
-Day,16,Food,0,Entertainment,0,Transport,3,School,0,Travel,0,Description,Bus
+Day,15,Food,10,Entertainment,0,Transport,0,Shopping,0,Groceries,0,Other,0,Description,Macs
+Day,15,Food,0,Entertainment,10,Transport,0,Shopping,0,Groceries,0,Other,0,Description,Movie
+Day,16,Food,0,Entertainment,0,Transport,3,Shopping,0,Groceries,0,Other,0,Description,Bus
 MONTH_YEAR,Nov 2021
 BUDGET,300
-Day,11,Food,0,Entertainment,0,Transport,0,School,10,Travel,0,Description,Books
-Day,12,Food,0,Entertainment,0,Transport,0,School,0,Travel,100,Description,Malaysia
-Day,13,Food,0,Entertainment,0,Transport,2,School,0,Travel,0,Description,Train
+Day,11,Food,0,Entertainment,0,Transport,0,Shopping,10,Groceries,0,Other,0,Description,Books
+Day,11,Food,0,Entertainment,0,Transport,0,Shopping,20,Groceries,0,Other,0,Description,Eat
+Day,11,Food,0,Entertainment,0,Transport,0,Shopping,0,Groceries,2,Other,0,Description,Bus
+Day,11,Food,0,Entertainment,10,Transport,0,Shopping,0,Groceries,0,Other,0,Description,Arcade
+Day,12,Food,0,Entertainment,0,Transport,0,Shopping,0,Groceries,100,Other,0,Description,Malaysia
+Day,13,Food,0,Entertainment,0,Transport,2,Shopping,0,Groceries,0,Other,0,Description,Train
+Day,12,Food,0,Entertainment,0,Transport,0,Shopping,10,Groceries,0,Other,0,Description,Books
+
