@@ -6,8 +6,6 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog
 from PyQt5 import uic
 
-from Expense import *
-
 # specifying the ui file 
 qtCreatorFile = "ExpenseTracker.ui"
 Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
