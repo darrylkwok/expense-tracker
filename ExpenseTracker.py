@@ -206,7 +206,6 @@ class Main(QMainWindow, Ui_MainWindow):
     def displayExpense(self):
         # Obtain data of current month selected
         month_selected = self.selectMonth_list.currentText()
-        
         # Clear Table and RowCount each time new month is selected
         self.expenseTable.clear()
         self.expenseTable.setRowCount(0)
@@ -328,7 +327,47 @@ class Main(QMainWindow, Ui_MainWindow):
                 daily_total += float(category[i][0])
                     
         return str(round(daily_total,2))
-    
+
+        
+    def addNewMonth(self):
+        # If Alert was visible, set invisible after each click first
+        if (self.newMonthError_alert.isVisible()):
+            self.newMonthError_alert.setVisible(False)
+            
+        # Get All Required Text
+        new_month = self.newMonth_edit.text().strip()
+        new_budget = self.newBudget_edit.text().strip()
+        
+        # Check if all fields have values, if not show error
+        if (new_month == "" or new_budget == ""):
+            self.newMonthError_alert.setText("No empty fields allowed")
+            self.newMonthError_alert.setVisible(True)
+            
+        # Update new month into monthly_info dict to be displayed
+        else:
+            self.monthly_info[new_month] = [new_budget]
+
+            # Reset Data for New, Empty Month
+            self.current_month_expenses = {}
+            self.totalExpenses_text.setText("0.00")
+            self.budgetLeft_text.setText(new_budget) 
+
+            # Display New Month 
+            self.loadMonth()
+            self.displayExpense()
+            
+            # If from new file, remove alert for user to add new month
+            if (self.addMonth_alert.isVisible()):
+                self.addMonth_alert.setVisible(False)
+        
+            # Reset all input fields
+            self.newMonth_edit.setText("")
+            self.newBudget_edit.setText("")
+            
+            # Overwrite current file with new information
+            self.updateFile()
+
+
     def addNewExpense(self):
         # If Alert was visible, set invisible after each click first
         if (self.newExpenseError_alert.isVisible()):
@@ -378,44 +417,7 @@ class Main(QMainWindow, Ui_MainWindow):
             
             # Overwrite current file with new information
             self.updateFile()
-    
-    def addNewMonth(self):
-        # If Alert was visible, set invisible after each click first
-        if (self.newMonthError_alert.isVisible()):
-            self.newMonthError_alert.setVisible(False)
-            
-        # Get All Required Text
-        new_month = self.newMonth_edit.text().strip()
-        new_budget = self.newBudget_edit.text().strip()
-        
-        # Check if all fields have values, if not show error
-        if (new_month == "" or new_budget == ""):
-            self.newMonthError_alert.setText("No empty fields allowed")
-            self.newMonthError_alert.setVisible(True)
-            
-        # Update new month into monthly_info dict to be displayed
-        else:
-            self.monthly_info[new_month] = [new_budget]
 
-            # Reset Data for New, Empty Month
-            self.current_month_expenses = {}
-            self.totalExpenses_text.setText("0.00")
-            self.budgetLeft_text.setText(new_budget) 
-
-            # Display New Month 
-            self.loadMonth()
-            self.displayExpense()
-            
-            # If from new file, remove alert for user to add new month
-            if (self.addMonth_alert.isVisible()):
-                self.addMonth_alert.setVisible(False)
-        
-            # Reset all input fields
-            self.newMonth_edit.setText("")
-            self.newBudget_edit.setText("")
-            
-            # Overwrite current file with new information
-            self.updateFile()
     
     def updateFile(self):
         # Initialise fixed category list
