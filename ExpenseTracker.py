@@ -71,7 +71,6 @@ class Main(QMainWindow, Ui_MainWindow):
         
 
     def uploadFile(self):
-        print('clicked upload file')
         # Open File Dialog Pop up for File selection
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -84,7 +83,6 @@ class Main(QMainWindow, Ui_MainWindow):
             filepath = fname[0]
             # Save filename to global
             self.filename = filepath[filepath.rfind('/') + 1:]
-            print(self.filename)
             
             # Reset Total Budget, Total Expense & Budget Left Display
             self.totalExpenses_text.setText("0.0")
@@ -167,14 +165,10 @@ class Main(QMainWindow, Ui_MainWindow):
         for key in self.monthly_info:
             months.append(key)
         
-        print("months")
-        print(months)
         # If there are months in dropdown, Enable Add New Expense button
         if (len(months) > 0):
-            print("yes months")
             self.expenseAdd_button.setEnabled(True)
         else:
-            print("no months")
             self.expenseAdd_button.setEnabled(False)
             self.addMonth_alert.setVisible(True)
 
@@ -185,7 +179,30 @@ class Main(QMainWindow, Ui_MainWindow):
         for month in reversed(months):
             self.selectMonth_list.addItem(month)
         
+
+    def setUpTableRow(self):
+        # Count number of rows needed for month selected
+        count = 0
         
+        # Get all spend days in a list ["11", "12", "13", ...]
+        days_list = list(self.current_month_expenses)
+        
+        for i in range(len(self.current_month_expenses)):
+            # One row for one day
+            count += 1
+            
+            # Get spend categories each day in a list ["Food", "Transport", "Shopping", ...]
+            day = days_list[i]
+            cats_list = list(self.current_month_expenses[day])
+            
+            for j in range(len(self.current_month_expenses[day])):
+                cat = cats_list[j]
+                # One row for one spend in all categories
+                count += len(self.current_month_expenses[day][cat])
+                
+        self.expenseTable.setRowCount(count)
+
+
     def displayExpense(self):
         # Obtain data of current month selected
         month_selected = self.selectMonth_list.currentText()
@@ -210,8 +227,6 @@ class Main(QMainWindow, Ui_MainWindow):
             self.current_month_budget = float(current_month_data[0])
             
             # If not new month (E.g. 'Dec 2021': ['300', {}]), Else Nothing to Display
-            print("current_month_data")
-            print(current_month_data)
             if (len(current_month_data) > 1):
                 # Get Current Month's expenses (Dict)
                 # {'11': {'Shopping': [('10', 'Books')], 'Groceries': [('2', 'Bus')]}}
@@ -313,29 +328,6 @@ class Main(QMainWindow, Ui_MainWindow):
                 daily_total += float(category[i][0])
                     
         return str(round(daily_total,2))
-        
-    
-    def setUpTableRow(self):
-        # Count number of rows needed for month selected
-        count = 0
-        
-        # Get all spend days in a list ["11", "12", "13", ...]
-        days_list = list(self.current_month_expenses)
-        
-        for i in range(len(self.current_month_expenses)):
-            # One row for one day
-            count += 1
-            
-            # Get spend categories each day in a list ["Food", "Transport", "Shopping", ...]
-            day = days_list[i]
-            cats_list = list(self.current_month_expenses[day])
-            
-            for j in range(len(self.current_month_expenses[day])):
-                cat = cats_list[j]
-                # One row for one spend in all categories
-                count += len(self.current_month_expenses[day][cat])
-                
-        self.expenseTable.setRowCount(count)
     
     def addNewExpense(self):
         # If Alert was visible, set invisible after each click first
@@ -437,9 +429,6 @@ class Main(QMainWindow, Ui_MainWindow):
                 file.write("MONTH_YEAR," + month_year + "\n")
                 current_month_budget = self.monthly_info[month_year][0]
                 file.write("BUDGET," + current_month_budget + "\n")
-                
-                print("monthly_info")
-                print(self.monthly_info)
                 
                 # If not just ['500'] (i.e only have budget no expense)
                 if (len(self.monthly_info[month_year]) > 1):
