@@ -82,7 +82,7 @@ class Main(QMainWindow, Ui_MainWindow):
         if fname[0]:
             filepath = fname[0]
             # Save filename to global
-            self.filename = filepath[filepath.rfind('/') + 1:]
+            self.filename = filepath[filepath.rfind('/') + 1 : ]
             
             # Reset Total Budget, Total Expense & Budget Left Display
             self.totalExpenses_text.setText("0.0")
@@ -225,7 +225,7 @@ class Main(QMainWindow, Ui_MainWindow):
             # Store Current Month's budget in global
             self.current_month_budget = float(current_month_data[0])
             
-            # If not new month (E.g. 'Dec 2021': ['300', {}]), Else Nothing to Display
+            # If not new month (E.g. 'Dec 2021': ['300']), Else Nothing to Display
             if (len(current_month_data) > 1):
                 # Get Current Month's expenses (Dict)
                 # {'11': {'Shopping': [('10', 'Books')], 'Groceries': [('2', 'Bus')]}}
@@ -290,7 +290,7 @@ class Main(QMainWindow, Ui_MainWindow):
     def calculateMonthExpenses(self):
         # Get all expenses into list regardless of dates
         # [[('100', 'Malaysia'), ('99', 'Thailand')], [('10', 'Books')]], [[('2', 'Train')]]]
-        month_expenses_list = [list(dict.values(i)) for i in list(dict.values(self.current_month_expenses))]
+        month_expenses_list = [list(i.values()) for i in list(self.current_month_expenses.values())]
 
         # Calculate total expense in this month
         monthly_total = 0
@@ -315,7 +315,7 @@ class Main(QMainWindow, Ui_MainWindow):
     def calculateDailyExpenses(self, day_expenses):
         # Get all expenses in a day into list
         # [('100', 'Malaysia'), ('99', 'Thailand')], [('10', 'Books')]]
-        day_expenses_list = list(dict.values(day_expenses))
+        day_expenses_list = list(day_expenses.values())
         
         # Calculate total expense on this day
         daily_total = 0
@@ -328,7 +328,7 @@ class Main(QMainWindow, Ui_MainWindow):
                     
         return str(round(daily_total,2))
 
-        
+
     def addNewMonth(self):
         # If Alert was visible, set invisible after each click first
         if (self.newMonthError_alert.isVisible()):
@@ -344,6 +344,7 @@ class Main(QMainWindow, Ui_MainWindow):
             self.newMonthError_alert.setVisible(True)
             
         # Update new month into monthly_info dict to be displayed
+        # {"Dec 2021": [500]}
         else:
             self.monthly_info[new_month] = [new_budget]
 
@@ -351,7 +352,6 @@ class Main(QMainWindow, Ui_MainWindow):
             self.current_month_expenses = {}
             self.totalExpenses_text.setText("0.00")
             self.budgetLeft_text.setText(new_budget) 
-
             # Display New Month 
             self.loadMonth()
             self.displayExpense()
@@ -425,8 +425,8 @@ class Main(QMainWindow, Ui_MainWindow):
         
         # Open current file selected and overwrite
         with open(self.filename, "w") as file:
-            # {'Oct 2021': ['500', {'15': {'Food': [('10', 'Macs'), ('6', Burger)], 'Entertainment': [('10', 'Movie')]}, 
-            #    '16': {'Transport': [('3', 'Bus')]}}]}
+            # {'Oct 2021': ['500', {'15': {'Food': [('10', 'Macs'), ('6', Burger)], 
+            # 'Entertainment': [('10', 'Movie')]}, '16': {'Transport': [('3', 'Bus')]}}]}
             for month_year in (self.monthly_info):
                 file.write("MONTH_YEAR," + month_year + "\n")
                 current_month_budget = self.monthly_info[month_year][0]
@@ -463,7 +463,8 @@ class Main(QMainWindow, Ui_MainWindow):
 
                                 # Initalise line_output with day info "Day,1"
                                 line_output = day_output 
-                                # Day,1,Food,0,Entertainment,0,Shopping,12,Groceries,0,Transport,0,Other,0,Description,Mac
+                                # Day,1,Food,0,Entertainment,0,Shopping,12,Groceries,
+                                #               0,Transport,0,Other,0,Description,Mac
                                 for i in range(len(categories)):
                                     line_output += "," + categories[i] + "," + values[i]
 
